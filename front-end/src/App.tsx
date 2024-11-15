@@ -34,7 +34,7 @@ class App extends React.Component<Props, GameState> {
     /**
      * state has type GameState as specified in the class inheritance.
      */
-    this.state = { cells: [] }
+    this.state = { cells: [], player: "", end: false, winner: ""}
   }
 
   /**
@@ -45,7 +45,7 @@ class App extends React.Component<Props, GameState> {
   newGame = async () => {
     const response = await fetch('/newgame');
     const json = await response.json();
-    this.setState({ cells: json['cells'] });
+    this.setState({ cells: json['cells'], player: json['player'], end: json['end'], winner: json['winner'] });
   }
 
   /**
@@ -61,7 +61,7 @@ class App extends React.Component<Props, GameState> {
       e.preventDefault();
       const response = await fetch(`/play?x=${x}&y=${y}`)
       const json = await response.json();
-      this.setState({ cells: json['cells'] });
+      this.setState({ cells: json['cells'], player: json['player'], end: json['end'], winner: json['winner'] });
     }
   }
 
@@ -84,6 +84,13 @@ class App extends React.Component<Props, GameState> {
       return (
         <div key={index}><BoardCell cell={cell}></BoardCell></div>
       )
+  }
+
+  createInstruction(): React.ReactNode{
+    if(this.state.end){
+      return(<div>{this.state.winner} wins</div>)
+    }
+    return(<div>{this.state.player} 's turn</div>)
   }
 
   /**
@@ -117,6 +124,9 @@ class App extends React.Component<Props, GameState> {
       <div>
         <div id="board">
           {this.state.cells.map((cell, i) => this.createCell(cell, i))}
+        </div>
+        <div id="instructions">
+          {this.createInstruction()}
         </div>
         <div id="bottombar">
           <button onClick={/* get the function, not call the function */this.newGame}>New Game</button>

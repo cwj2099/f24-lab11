@@ -26,10 +26,27 @@ public class GameState {
     @Override
     public String toString() {
         return """
-                { "cells": %s}
+                { 
+                "cells": %s,
+                }
                 """.formatted(Arrays.toString(this.cells));
     }
 
+    public String newToString(Game game){
+        String player = game.getPlayer().toString();
+        boolean end = game.getWinner() != null;
+        String winner = "";
+        if(end) winner = game.getWinner().toString();
+
+        return """
+            { 
+            "cells": %s,
+            "player": "%s",
+            "end": %b,
+            "winner": "%s"
+            }
+            """.formatted(Arrays.toString(this.cells), player, end, winner);
+    }
     private static Cell[] getCells(Game game) {
         Cell cells[] = new Cell[9];
         Board board = game.getBoard();
